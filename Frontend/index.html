@@ -10,8 +10,9 @@
 
     <header class="app-header">
         <div class="container header-inner">
-            <h1>&#128176; Personal Expense Tracker</h1>
-            <p class="subtitle">Track your title, amount, category, date and notes &mdash; all in one place.</p>
+            <p class="eyebrow">PERSONAL FINANCE</p>
+            <h1>Expense tracker</h1>
+            <p class="subtitle">A clear record of where your money goes.</p>
         </div>
     </header>
 
@@ -159,6 +160,20 @@
     <footer class="app-footer">
         <!-- <div class="container">Personal Expense Tracker &mdash; FastAPI + Vanilla JS</div> -->
     </footer>
+
+    <!-- DELETE CONFIRMATION -->
+    <dialog id="deleteDialog" class="confirm-dialog" aria-labelledby="deleteDialogTitle"
+            aria-describedby="deleteDialogMessage">
+        <div class="dialog-content">
+            <p class="eyebrow">CONFIRM ACTION</p>
+            <h2 id="deleteDialogTitle">Delete this expense?</h2>
+            <p id="deleteDialogMessage">This entry will be permanently removed from your records.</p>
+            <div class="dialog-actions">
+                <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Keep expense</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete expense</button>
+            </div>
+        </div>
+    </dialog>
 
     <!-- TOAST NOTIFICATION -->
     <div id="toast" class="toast" role="alert" aria-live="assertive"></div>

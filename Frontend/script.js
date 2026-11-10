@@ -25,6 +25,7 @@ const CURRENCY = "₹"; // change to "$", "€", etc. if you prefer
    ========================================================= */
 let expenses = [];
 let editingId = null;
+let pendingDeleteId = null;
 let allCategories = [];        // every category ever entered (unfiltered)
 const DEFAULT_CATEGORIES = []; // built-in suggestions, snapshotted from the HTML
 
@@ -369,11 +370,6 @@ async function submitExpense(event) {
 }
 
 async function deleteExpense(id) {
-    const confirmed = window.confirm(
-        "Delete this expense? This cannot be undone."
-    );
-    if (!confirmed) return;
-
     try {
         const response = await fetch(`${API_BASE}/${id}`, { method: "DELETE" });
 
@@ -536,7 +532,27 @@ function init() {
 
         const id = Number(button.dataset.id);
         if (button.dataset.action === "edit") startEdit(id);
-        if (button.dataset.action === "delete") deleteExpense(id);
+        if (button.dataset.action === "delete") {
+            pendingDeleteId = id;
+            $("deleteDialog").showModal();
+        }
+    });
+
+    $("cancelDeleteBtn").addEventListener("click", () => {
+        pendingDeleteId = null;
+        $("deleteDialog").close();
+    });
+
+    $("confirmDeleteBtn").addEventListener("click", async () => {
+        if (pendingDeleteId === null) return;
+        const id = pendingDeleteId;
+        pendingDeleteId = null;
+        $("deleteDialog").close();
+        await deleteExpense(id);
+    });
+
+    $("deleteDialog").addEventListener("close", () => {
+        pendingDeleteId = null;
     });
 
     filterTitleInput.addEventListener("input", debounce(loadExpenses));
