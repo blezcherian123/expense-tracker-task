@@ -30,7 +30,7 @@ body {
 
 button, input, select, textarea { font: inherit; }
 
-.container { width: min(1040px, 100% - 2.5rem); margin-inline: auto; }
+.container { width: min(1040px, calc(100% - 2.5rem)); margin-inline: auto; }
 .hidden { display: none !important; }
 .muted { color: var(--muted); }
 
@@ -100,8 +100,8 @@ button, input, select, textarea { font: inherit; }
 .list-header h2 { margin: 0; }
 .count-pill { color: var(--muted); font: 0.82rem "Segoe UI", Arial, sans-serif; }
 
-.form-grid, .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.85rem; }
-.field { display: flex; flex-direction: column; gap: 0.3rem; }
+.form-grid, .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: 0.85rem; }
+.field { display: flex; min-width: 0; flex-direction: column; gap: 0.3rem; }
 .field-full { grid-column: 1 / -1; }
 .field-btn { justify-content: flex-end; }
 label { color: #4d4c45; font: 600 0.82rem "Segoe UI", Arial, sans-serif; }
@@ -177,19 +177,44 @@ textarea { min-height: 64px; resize: vertical; }
 .dialog-actions { display: flex; justify-content: flex-end; gap: 0.55rem; margin-top: 1.4rem; }
 
 @media (max-width: 720px) {
-    .container { width: min(1040px, 100% - 1.4rem); }
+    .container { width: min(1040px, calc(100% - 1.4rem)); }
     .app-header { padding: 2rem 0 1.5rem; }
     .stats { grid-template-columns: 1fr; gap: 0.55rem; }
     .stat-card { padding: 0.7rem 0.85rem; }
     .stat-value { font-size: 1.15rem; }
     .card { padding: 1rem; }
+    .list-header { align-items: flex-start; }
     .expense-table thead { display: none; }
     .expense-table, .expense-table tbody, .expense-table tr, .expense-table td { display: block; width: 100%; }
     .expense-table tr { padding: 0.35rem 0; border-bottom: 5px solid var(--page); }
-    .expense-table td { display: flex; justify-content: space-between; gap: 1rem; padding: 0.4rem 0.7rem; border: 0; text-align: right; }
+    .expense-table td { display: flex; min-width: 0; justify-content: space-between; gap: 0.75rem; padding: 0.4rem 0.7rem; border: 0; text-align: right; }
     .expense-table td::before { flex-shrink: 0; color: var(--muted); content: attr(data-label); font: 600 0.68rem "Segoe UI", Arial, sans-serif; letter-spacing: 0.06em; text-align: left; text-transform: uppercase; }
     .cell-note { max-width: none; }
+    .expense-table td.actions-col { flex-wrap: wrap; }
+    .expense-table td.actions-col::before { margin-right: auto; }
     .actions-col .btn + .btn { margin-left: 0.25rem; }
+}
+
+@media (max-width: 480px) {
+    .container { width: calc(100% - 1rem); }
+    .app-header { padding: 1.6rem 0 1.25rem; margin-bottom: 1rem; }
+    .header-inner h1 { font-size: clamp(1.7rem, 8vw, 2.2rem); }
+    .subtitle { max-width: 32ch; font-size: 0.92rem; }
+    .card { padding: 0.85rem; }
+    .form-actions { flex-wrap: wrap; }
+    .form-actions .btn { flex: 1 1 auto; }
+    .expense-table td { padding-inline: 0.45rem; }
+    .dialog-content { padding: 1.15rem; }
+    .dialog-actions { flex-direction: column-reverse; }
+    .dialog-actions .btn { width: 100%; }
+}
+
+@media (max-width: 340px) {
+    .container { width: calc(100% - 0.75rem); }
+    .card { padding: 0.7rem; }
+    .expense-table td { gap: 0.4rem; padding-inline: 0.3rem; }
+    .expense-table td::before { font-size: 0.62rem; }
+    .btn-small { padding: 0.25rem 0.4rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

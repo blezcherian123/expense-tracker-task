@@ -12,6 +12,53 @@ Think of the app as three parts:
 
 When you submit the form, the browser sends the expense to the service. The service validates it, saves it in the database, and sends the saved record back so the page can refresh. Filters and monthly totals also come from requests to the service.
 
+## Technology stack and why it is used
+
+The project uses a lightweight full-stack design. The tools keep the frontend simple, provide a structured API, and store expense information in a relational database.
+
+### Backend - Python and FastAPI
+
+FastAPI is used to build the web API. It is a modern Python framework with automatic request validation through Pydantic, generated interactive API documentation, and dependency injection for sharing and closing database sessions. It also supports asynchronous endpoints if the service needs them later.
+
+In this application, FastAPI handles creating, retrieving, updating, deleting, filtering, and summarizing expenses.
+
+### Frontend - HTML, CSS, and JavaScript
+
+HTML structures the form, summary cards, filters, table, and confirmation dialog. Custom CSS provides a responsive interface without a UI framework. JavaScript handles form interactions and communicates with the backend using the browser Fetch API. This keeps the frontend lightweight and avoids extra package dependencies.
+
+### Database - PostgreSQL
+
+PostgreSQL is an open-source relational database with transactional consistency and support for structured values such as dates, decimal amounts, and text. Its filtering and aggregation features fit the expense list and monthly/category summaries, and it can support larger datasets as the application grows.
+
+In this application, PostgreSQL stores each expense's title, amount, category, date, and optional note.
+
+### ORM - SQLAlchemy
+
+SQLAlchemy connects the Python service to the database through Python objects and queries. It keeps the expense model and database actions organized, avoids writing raw SQL for each operation, and supports other relational databases if the project changes later.
+
+In this application, SQLAlchemy defines the `Expense` model, manages connections and sessions, and performs create, read, update, and delete operations.
+
+### Data validation - Pydantic
+
+Pydantic checks incoming data types and field rules and helps FastAPI return clear validation errors. Here, it checks expense data such as required titles and categories, positive amounts, and decimal precision before the data is saved.
+
+### Environment settings - python-dotenv
+
+`python-dotenv` loads local settings from an environment file so configuration and database credentials do not need to be hardcoded in the Python source. In this project, `backend/.env` supplies the PostgreSQL connection URL through `DATABASE_URL`.
+
+## Overall architecture
+
+The application follows a client-server flow:
+
+1. HTML, CSS, and JavaScript present the interface in the browser.
+2. JavaScript sends HTTP requests to the FastAPI backend.
+3. FastAPI validates request data using Pydantic schemas.
+4. SQLAlchemy runs the database operations.
+5. PostgreSQL stores or retrieves expense records.
+6. FastAPI returns JSON for the frontend to display.
+
+This separation keeps page presentation, request handling, validation, and data storage in distinct parts of the codebase, which makes the application easier to understand and extend.
+
 ## Folder and file guide
 
 ### `Frontend/` - the visible website
@@ -45,15 +92,23 @@ The main API path is `/api/expenses`:
 
 The interactive API reference is available at `/docs` while the service is running.
 
-## Run it on your computer
+## Set up and run the project
 
-You need Python and a PostgreSQL database. Create a database, then create `backend/.env` with this format, replacing the example values locally:
+You need Python and PostgreSQL installed, plus a PostgreSQL database for the application. You can create the database using a PostgreSQL tool such as pgAdmin or `psql`. For example, the database could be named `expense_tracker`.
+
+### 1. Configure the database connection
+
+Create `backend/.env` and put your own local connection details in it. The format is:
 
 ```text
 DATABASE_URL=postgresql+psycopg://USER:PASSWORD@HOST:5432/DATABASE_NAME
 ```
 
-From the project folder, install dependencies and start the service:
+Replace `USER`, `PASSWORD`, `HOST`, and `DATABASE_NAME` with your PostgreSQL username, password, server address, and database name. For a local default PostgreSQL server, `HOST` is often `localhost` and the port is commonly `5432`. Keep real credentials in `backend/.env`; do not paste them into source files or commit them.
+
+### 2. Install Python dependencies
+
+Open PowerShell in the project folder and run:
 
 ```powershell
 cd backend
@@ -63,13 +118,19 @@ python -m pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-Open `http://127.0.0.1:8000/` in a browser. The service creates the expense table when it starts if that table does not exist yet. The frontend is already served by the service, so opening `Frontend/index.html` separately is optional.
+The first commands create and activate a private Python environment for this project and install the packages listed in `backend/requirements.txt`. If PowerShell blocks environment activation, run `./.venv/Scripts/python.exe -m pip install -r requirements.txt` and then `./.venv/Scripts/python.exe -m uvicorn main:app --reload` from the `backend` folder instead.
+
+### 3. Open the application
+
+Keep the terminal running and open `http://127.0.0.1:8000/` in a browser. The backend serves the frontend from this address. The database table is created automatically at startup if it does not already exist.
+
+The interactive API reference is at `http://127.0.0.1:8000/docs`. To stop the server, focus the terminal and press `Ctrl+C`.
 
 ## Keeping credentials out of GitHub
 
 The root `.gitignore` excludes `.env` files, virtual environments, Python-generated files, local database files, private-key files, and common credential bundle names. A safe example settings file may be named `.env.example`; it must contain placeholders only, never working passwords or tokens.
 
-Ignore rules only prevent *untracked* files from being added automatically. They do not remove a secret that was committed earlier. This supplied folder currently has no `.git` directory, so its Git history and tracked-file status cannot be inspected here. Before pushing from the actual Git checkout, run:
+Ignore rules only prevent *untracked* files from being added automatically. They do not remove a secret that was committed earlier. In the current checkout, `.env` and `backend/.env` are ignored and are not tracked by Git. Before pushing, you can verify the status with:
 
 ```powershell
 git status --short
@@ -90,4 +151,6 @@ The `git ls-files` command should print nothing for environment files. If a real
 
 The expense list's **Delete** button opens a separate confirmation dialog in the page. The browser's native confirmation alert is not used. A deletion request is sent only after the person chooses **Delete expense**. Choosing **Keep expense** or pressing Escape closes the dialog without deleting. The dialog is labeled for assistive technology and uses the browser's native `<dialog>` element for modal focus handling.
 
-On narrow screens, the expense table changes into stacked labeled rows.
+## Responsive layout
+
+The page adapts to desktop, tablet, and phone widths using CSS only; responsive styling does not change the application's features or data behavior. On smaller screens, the content margins and cards tighten, the form and filter fields reflow into columns that fit the available width, and the summary cards stack for easier reading. The expense table becomes stacked rows with labels for each value instead of requiring a wide table. Buttons and the delete dialog also fit narrow screens, including small phones.
