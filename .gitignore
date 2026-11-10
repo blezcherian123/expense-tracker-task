@@ -1,0 +1,29 @@
+# Local environment settings and credentials
+.env
+.env.*
+!.env.example
+backend/.env
+
+# Python virtual environments and generated files
+venv/
+.venv/
+backend/venv/
+__pycache__/
+*.py[cod]
+
+# Local databases and exports
+*.db
+*.sqlite
+*.sqlite3
+
+# Private keys and credential bundles
+*.pem
+*.key
+*credentials*.json
+*service-account*.json
+
+# Local editor and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
