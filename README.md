@@ -126,9 +126,7 @@ Keep the terminal running and open `http://127.0.0.1:8000/` in a browser. The ba
 
 The interactive API reference is at `http://127.0.0.1:8000/docs`. To stop the server, focus the terminal and press `Ctrl+C`.
 
-## Keeping credentials out of GitHub
 
-The root `.gitignore` excludes `.env` files, virtual environments, Python-generated files, local database files, private-key files, and common credential bundle names. A safe example settings file may be named `.env.example`; it must contain placeholders only, never working passwords or tokens.
 
 Ignore rules only prevent *untracked* files from being added automatically. They do not remove a secret that was committed earlier. In the current checkout, `.env` and `backend/.env` are ignored and are not tracked by Git. Before pushing, you can verify the status with:
 
