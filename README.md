@@ -1,6 +1,6 @@
 # Personal Expense Tracker
 
-This is a small website for recording personal expenses. You can add an expense, see it in a list, search and filter the list, change an entry, or delete it. The page also shows totals for the visible list and for the current month.
+A small website for recording personal expenses. You can add an expense, see it in a list, search and filter the list, edit or delete an entry, and review totals for the visible list and current month.
 
 ## How the pieces fit together
 
@@ -14,13 +14,13 @@ When you submit the form, the browser sends the expense to the service. The serv
 
 ## Folder and file guide
 
-### `Frontend/` — the visible website
+### `Frontend/` - the visible website
 
-- **`index.html`** lays out the page: the expense form, summary cards, filters, and expense table. It also contains suggested categories.
-- **`style.css`** controls colors, spacing, buttons, tables, and the layout on small screens.
+- **`index.html`** lays out the page: the expense form, summary cards, filters, expense table, and delete confirmation dialog. It also contains suggested categories.
+- **`style.css`** gives the page a minimal, classic look with warm neutral surfaces, muted green accents, restrained borders, simple typography, and layouts that adapt to small screens. It also styles the delete dialog.
 - **`script.js`** makes the page interactive. It talks to the backend, checks required form fields, draws the table and totals, applies filters, and handles add, edit, and delete actions. The currency display is currently set to Indian rupees.
 
-### `backend/` — the service and database logic
+### `backend/` - the service and database logic
 
 - **`main.py`** starts the FastAPI web service, provides the web API, enables browser requests from a separately opened frontend, and serves the frontend files at the website root.
 - **`database.py`** reads `DATABASE_URL` from environment settings and opens database connections. Each request gets a database session that is closed afterward.
@@ -85,3 +85,9 @@ The `git ls-files` command should print nothing for environment files. If a real
 - The app uses a database connection string supplied outside source control. Back up the database separately; `.gitignore` does not protect database contents or backups stored elsewhere.
 - The monthly summary is calculated by the backend. The top "Total (list)" and entry count reflect the currently filtered list.
 - The project has no automated test suite or database migration setup in the files currently present.
+
+## Frontend interactions
+
+The expense list's **Delete** button opens a separate confirmation dialog in the page. The browser's native confirmation alert is not used. A deletion request is sent only after the person chooses **Delete expense**. Choosing **Keep expense** or pressing Escape closes the dialog without deleting. The dialog is labeled for assistive technology and uses the browser's native `<dialog>` element for modal focus handling.
+
+On narrow screens, the expense table changes into stacked labeled rows.
